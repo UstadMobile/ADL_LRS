@@ -192,7 +192,8 @@ processors = {
    }     
 }
 
-@transaction.commit_on_success
+#@transaction.commit_on_success
+@transaction.atomic
 def handle_request(request, more_id=None):
     try:
         r_dict = req_parse.parse(request, more_id)

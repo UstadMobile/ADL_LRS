@@ -129,7 +129,8 @@ def admin_attachments(request, path):
         response['Content-Disposition'] = 'attachment; filename="%s"' % path
         return response
 
-@transaction.commit_on_success
+#@transaction.commit_on_success
+@transaction.atomic
 @login_required()
 @require_http_methods(["POST", "GET"])
 def reg_client(request):
@@ -158,7 +159,8 @@ def reg_client(request):
         else:
             return render_to_response('regclient.html', {"form": form}, context_instance=RequestContext(request))
 
-@transaction.commit_on_success
+#@transaction.commit_on_success
+@transaction.atomic
 @login_required()
 @require_http_methods(["POST", "GET"])
 def reg_client2(request):
@@ -223,7 +225,8 @@ def my_activity_state(request):
         return HttpResponse(state.json_state, content_type=state.content_type, status=200)
     return HttpResponseBadRequest("Activity ID, State ID and are both required")
 
-@transaction.commit_on_success
+#@transaction.commit_on_success
+@transaction.atomic
 @login_required()
 @require_http_methods(["GET"])
 def me(request, template='me.html'):
@@ -254,7 +257,8 @@ def my_download_statements(request):
     response['Content-Length'] = len(result)
     return response
 
-@transaction.commit_on_success
+#@transaction.commit_on_success
+@transaction.atomic
 @login_required()
 @require_http_methods(["GET", "POST"])
 def my_app_status(request):
@@ -270,7 +274,8 @@ def my_app_status(request):
     except:
         return HttpResponse(json.dumps({"error_message":"unable to fulfill request"}), mimetype="application/json", status=400)
 
-@transaction.commit_on_success
+#@transaction.commit_on_success
+@transaction.atomic
 @login_required()
 @require_http_methods(["DELETE"])
 def delete_token(request):
@@ -291,7 +296,8 @@ def delete_token(request):
     except:
         return HttpResponse("Unknown token", status=400)
 
-@transaction.commit_on_success
+#@transaction.commit_on_success
+@transaction.atomic
 @login_required()
 @require_http_methods(["DELETE"])
 def delete_token2(request):
@@ -306,7 +312,8 @@ def delete_token2(request):
         return HttpResponse(e.message, status=400)
     return HttpResponse("", status=204)
 
-@transaction.commit_on_success
+#@transaction.commit_on_success
+@transaction.atomic
 @login_required()
 @require_http_methods(["DELETE"])
 def delete_client(request):
