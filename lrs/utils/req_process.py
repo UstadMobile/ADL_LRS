@@ -14,7 +14,7 @@ from ..managers.ActivityProfileManager import ActivityProfileManager
 from ..managers.ActivityStateManager import ActivityStateManager 
 from ..managers.AgentProfileManager import AgentProfileManager
 from ..managers.StatementManager import StatementManager
-from ..tasks import check_activity_metadata, void_statements
+#from ..tasks import check_activity_metadata, void_statements
 
 def process_statement(stmt, auth, version, payload_sha2s):
     # Add id to statement if not present
@@ -124,9 +124,10 @@ def statements_post(req_dict):
     stmt_responses = process_body(body, auth, req_dict['headers']['X-Experience-API-Version'], req_dict.get('payload_sha2s', None))
     stmt_ids = [stmt_tup[0] for stmt_tup in stmt_responses]
     stmts_to_void = [stmt_tup[1] for stmt_tup in stmt_responses if stmt_tup[1]]
-    check_activity_metadata.delay(stmt_ids)
+    #check_activity_metadata.delay(stmt_ids)
     if stmts_to_void:
-        void_statements.delay(stmts_to_void)
+	pass
+        #void_statements.delay(stmts_to_void)
     return HttpResponse(json.dumps([st for st in stmt_ids]), mimetype="application/json", status=200)
 
 def statements_put(req_dict):
@@ -135,9 +136,10 @@ def statements_put(req_dict):
     stmt_responses = process_body([req_dict['body']], auth, req_dict['headers']['X-Experience-API-Version'], req_dict.get('payload_sha2s', None))
     stmt_ids = [stmt_tup[0] for stmt_tup in stmt_responses]
     stmts_to_void = [stmt_tup[1] for stmt_tup in stmt_responses if stmt_tup[1]]
-    check_activity_metadata.delay(stmt_ids)
+    #check_activity_metadata.delay(stmt_ids)
     if stmts_to_void:
-        void_statements.delay(stmts_to_void)       
+	pass
+        #void_statements.delay(stmts_to_void)       
     return HttpResponse("No Content", status=204)
 
 def statements_more_get(req_dict):
