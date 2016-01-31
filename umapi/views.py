@@ -205,17 +205,24 @@ external facing API: POST request. Send me "username", "password" "url" < Thats 
 
 """
 def login(request):
+    print("Login..")
     try:
+	print("Starting login process..")
         username = request.POST['username']
         password = request.POST['password']
         master_server_url = request.POST['url']
 	url = master_server_url
+	print("THe request is: " )
+	print(request)
+	print(url)
+	print(username)
+	print(password)
     except:
 	authresponse = HttpResponse(status=400)
 	authresponse.write("Bad request. Make sure username, password, and master server url are in this request as POST")
 	return authresponse
 	
-
+    print("cechking master server  url..")
     if not master_server_url.endswith("/"):
 	master_server_url = master_server_url + "/"
     user_destination = username + "@" + master_server_url
