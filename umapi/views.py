@@ -211,12 +211,6 @@ def login(request):
         master_server_url = request.POST['url']
 	url = master_server_url
     except:
-	print("I'm testing..")
-        username="varunasingh"
-        password="varunasingh"
-        master_server_url = "http://localhost:8044/xAPI/statements"
-	limit_bit = "?limit=1"
-	url = os.path.join(master_server_url, limit_bit)
 	authresponse = HttpResponse(status=400)
 	authresponse.write("Bad request. Make sure username, password, and master server url are in this request as POST")
 	return authresponse
