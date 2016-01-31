@@ -44,7 +44,7 @@ LANGUAGE_CODE = 'en-US'
 # content for multiple sites.
 SITE_ID = 1
 SITE_SCHEME = 'http'
-SITE_DOMAIN = 'localhost:8000'
+SITE_DOMAIN = 'localhost:8425'
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
