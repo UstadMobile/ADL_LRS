@@ -202,6 +202,7 @@ def auth_backend_old(username, password, master_server_url):
 
 """
 external facing API: POST request. Send me "username", "password" "url" < Thats the master server. 
+The url COMES WITH endpoint/statements?limit=1
 
 """
 def login(request):
@@ -212,11 +213,6 @@ def login(request):
         password = request.POST['password']
         master_server_url = request.POST['url']
 	url = master_server_url
-	print("THe request is: " )
-	print(request)
-	print(url)
-	print(username)
-	print(password)
     except:
 	authresponse = HttpResponse(status=400)
 	authresponse.write("Bad request. Make sure username, password, and master server url are in this request as POST")
@@ -225,6 +221,7 @@ def login(request):
     print("cechking master server  url..")
     if not master_server_url.endswith("/"):
 	master_server_url = master_server_url + "/"
+    master_server_url.strip('/') #Get rid of all slashes.. (Makes the above redundnat)
     user_destination = username + "@" + master_server_url
 
     print("Checking user: " + username)
@@ -295,8 +292,10 @@ def sendStatement(statement_status):
     username = statement_status.credential.username
     password = statement_status.credential.password
     url = statement_status.credential.endpoint
+    url = url.strip('/') #Just in case it ending up..?
     if url.endswith("?limit=1"):
 	url = url.split("?limit=")[0]
+
     #MASTER_SERVER_XAPI="http://localhost:8044/xAPI/statements/"
     #url = "http://localhost:8044/xAPI/statements/"
     MAX_PENDING_TRIES=20
