@@ -36,19 +36,22 @@ def xapi_login(username, password, url):
     req.add_header("Authorization", "Basic %s" % base64string)
     
     try:
-        response = urllib2.urlopen(req)
+	#Make the request with a timeout of 5 seconds
+        response = urllib2.urlopen(req, timeout=5)
         response_code = response.getcode()
+	code = response.getcode()
 	if response.getcode() == 200:
 	    print("Statement status 200")
-	    return True
+	    return True, code
 	    
-    except urllib2.HTTPError, e:
+    except urllib2.HTTPError, e: #Catched everything but 200 
         print('HTTPError = ' + str(e.code))
 	response_code = e.code
-	return False
+	return False, e.code
 
-    except urllib2.URLError, e:
+    except urllib2.URLError, e: #Something wrong with request, no internet
         print('URLError = ' + str(e.reason))
+	return False, False
     except httplib.HTTPException, e:
         print('HTTPException')
     except Exception, e:
@@ -56,11 +59,10 @@ def xapi_login(username, password, url):
 	response_code = response.getcode()
 	if response_code == 200:
 	    print("Success.")
-	    return True
+	    return True, response_code
 
-    #return response_code
-
-    return False
+    #Should never be called..
+    return False, False
 
 def auth_backend(username, password, master_server_url):
     try:
@@ -78,22 +80,31 @@ def auth_backend(username, password, master_server_url):
 	if user is not None:
 	    # Yes? return the Django user object
 	    print("Local LRS: Username and Password check success")
+	    
+	    #Check if internet is off / bad connectivity, it should let you through..
+	    
+
 	    print("Not so fast, it could be old password. Will check the same against the Master Server..")
-	    if xapi_login(username,password, master_server_url): 
+	    xapi_status, code = xapi_login(username,password, master_server_url)
+	    if xapi_status: 
 		#Returns true if user is successfully authenticated, False if not
 		print("Master Server: Username and Password check success.")
 		print("   Nothing to update. Letting you through..")
 	        return user
-	    else:
+	    if not xapi_status and code:
 		print("Master Server: Unable to check same credentials on Master Server. Either password is wrong on either master/local or no account created.")
 		return None
+	    if not xapi_status and not code:
+		print("No internet. Giving user found locally..")
+		return user
 	else:
 	    print("Local LRS: User auth failed.")
 	    print("Local LRS: Checking if user exists at all on local LRS..")
 	    user_count = User.objects.filter(username=username).count()
             if user_count > 0:
 		print("Local LRS: Okay, so the user exists locally. The password given was locally wrong but may be okay on the Master Server") 
-		if xapi_login(username,password, master_server_url):
+		xapi_status, code = xapi_login(username,password, master_server_url)
+		if xapi_status:
 		    print("Master Server: The password was correct here")
 		    print("   got to update local's password")
 		    user = User.objects.get(username=username)
@@ -118,7 +129,8 @@ def auth_backend(username, password, master_server_url):
 		return user		
 	    else:
 		print("Local LRS: Nope, no user locally. Checking on Master Server")
-	        if xapi_login(username,password, master_server_url): 
+		xapi_status, code = xapi_login(username,password, master_server_url)
+	        if xapi_status: 
 		    #Returns true if user is successfully authenticated, False if not
 		    print("Master Server: Username and Password check success for new user.")
 		    print("Master Server: Will Create New User")
@@ -140,7 +152,7 @@ def auth_backend(username, password, master_server_url):
 	print("Exception: " + str(e))
 
 
-
+"""
 def auth_backend_old(username, password, master_server_url):
     if xapi_login(username,password, master_server_url): 
         #Returns true if user is successfully authenticated, False if not
@@ -199,6 +211,9 @@ def auth_backend_old(username, password, master_server_url):
     except Exception, e:
 	print("Exception in getting local user if exists:" + str(e))
 	return None
+
+"""
+
 
 """
 external facing API: POST request. Send me "username", "password" "url" < Thats the master server. 
