@@ -321,6 +321,10 @@ def sendStatement(statement_status):
     req.add_header("Authorization", "Basic %s" % base64string)   
     statement_json = statement.full_statement
     #Need to do it as ADL doesn't recognize stored when sending new statement to another LRS server
+    print("Type: ")
+    print(type(statement_json))
+    print(statement_json)
+    
     del statement_json['stored']
 
     statement_json_string = json.dumps(statement_json)
