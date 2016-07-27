@@ -323,8 +323,9 @@ def sendStatement(statement_status):
     #Need to do it as ADL doesn't recognize stored when sending new statement to another LRS server
     print("Type: ")
     print(type(statement_json))
-    print(statement_json)
-    
+    if isinstance(statement_json, unicode):
+	statement_json = json.loads(statement_json)
+    print(type(statement_json))
     del statement_json['stored']
 
     statement_json_string = json.dumps(statement_json)
