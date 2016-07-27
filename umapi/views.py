@@ -260,15 +260,15 @@ def login(request):
 
 #@login_required(login_url='/accounts/login/')
 def forward(request):
-    print "Starting forward for every user.."
+    print "forward(): Starting forward for every user.."
     all_users = User.objects.all()
     for every_user in all_users:
 	username = every_user.username
-	print("Scanning statements for user: " + str(username))
+	print("forward(): Scanning statements for user: " + str(username))
 	try:
 	    user_credential = credentials.objects.get(user=every_user, username=username)
 	except credentials.DoesNotExist:
-	    print("Skipping out for username: " + str(username))
+	    print("forward(): Skipping out for username: " + str(username))
 	    #Skipping because this user has no credetials stored. Whih means user has not logged in 
 	    #the user couldn't have made any statements. We have this because when the user logs in
 	    #We keep the server url by which he wants to log in. That way we know fr sure where the
@@ -277,12 +277,12 @@ def forward(request):
 	password = user_credential.password
 
         all_pending_statement_status = update_statement_forward_status(every_user, user_credential)
-
+	print("forward(): Sending " + str(len(all_pending_statement_status)) + " statements.");
         for every_statement_status in all_pending_statement_status:
 	    sendStatement(every_statement_status)
 
     authresponse = HttpResponse(status=200)
-    authresponse.write("Forwarded.")
+    authresponse.write("forward(): Forwarded.")
     return authresponse
 
 def update_statement_forward_status(user, user_credential):
