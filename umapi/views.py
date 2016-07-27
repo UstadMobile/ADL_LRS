@@ -329,8 +329,8 @@ def sendStatement(statement_status):
     del statement_json['stored']
 
     statement_json_string = json.dumps(statement_json)
-    print("Statement JSON STRING:")
-    print(statement_json_string)
+    #print("Statement JSON STRING:")
+    #print(statement_json_string)
 
     try:
         response = urllib2.urlopen(req,statement_json_string)
