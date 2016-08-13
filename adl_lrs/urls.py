@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 
 # Uncomment the next two lines to enable the admin (imports admin module in each app):
 from django.contrib import admin
-admin.autodiscover()
+#admin.autodiscover()
 
 urlpatterns = patterns('adl_lrs.views',
     # for anyone trying to hit the xapi endpoints
